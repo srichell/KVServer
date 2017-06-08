@@ -3,8 +3,12 @@ package com.srichell.tsc.main;
 import com.srichell.tsc.lru.LRU;
 import com.srichell.tsc.lru.LRUEntry;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * Created by sridhar on 6/8/17.
@@ -88,7 +92,33 @@ public class KVServer {
         }
     }
 
-    private void run() {
+    public void run() {
+        Socket clientSocket = null;
+        while(true) {
+            try {
+                clientSocket = getServerSocket().accept();
+                DataInputStream is = new DataInputStream(clientSocket.getInputStream());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                String commandLine = null;
+                // One Line, one command
+                while ((commandLine = reader.readLine()) != null) {
+
+                    String[] commandSegments = commandLine.split(" ");
+                    if(commandSegments[0].equalsIgnoreCase("GET")) {
+
+                    }
+                    if(commandSegments[0].equalsIgnoreCase("PUT")) {
+
+                    }
+                    System.out.println("Unknown Command. Ignoring");
+                }
+                is.close();
+                reader.close();
+                clientSocket.close();
+            } catch (IOException e) {
+                System.out.println("Exception occurred while handling request from client " + e);
+            }
+        }
     }
 
     private KVServer init() throws IOException {
