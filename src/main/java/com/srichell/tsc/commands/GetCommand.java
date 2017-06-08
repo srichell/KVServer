@@ -25,6 +25,9 @@ public class GetCommand extends Command {
         os.println(outputString);
         os.flush();
 
+        //Add Sentinel
+        os.println(END_OF_RESPONSE);
+        os.flush();
     }
 
     @Override

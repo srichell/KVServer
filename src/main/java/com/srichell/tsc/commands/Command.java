@@ -16,6 +16,7 @@ public abstract class Command {
     private LRU<LRUEntry, String, String> lru;
 
     private static final int COMMAND_TYPE_INDEX = 0;
+    protected static final String END_OF_RESPONSE = "EOR";
 
 
     public abstract void handle() throws IOException;

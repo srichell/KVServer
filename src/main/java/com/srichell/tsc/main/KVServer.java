@@ -19,6 +19,7 @@ import java.net.Socket;
 public class KVServer {
     private static final long DEFAULT_MAX_ENTRIES = 10;
     private static final int DEFAULT_LISTEN_PORT = 7000;
+    private static final String END_OF_COMMAND = "EOC";
 
     private int listenPort;
     private long maxEntries;
@@ -105,8 +106,15 @@ public class KVServer {
                 String commandLine = null;
                 // One Line, one command
                 while ((commandLine = reader.readLine()) != null) {
+                    if(commandLine.indexOf(END_OF_COMMAND) != -1) {
+                        // Client Sent end of command
+                        break;
+                    }
                     Commands.getByType(Command.getCommandType(commandLine)).handle(commandLine, clientSocket, getLru());
                 }
+                is.close();
+                reader.close();
+                clientSocket.close();
                 clientSocket.close();
             } catch (IOException e) {
                 System.out.println("Exception occurred while handling request from client " + e);
