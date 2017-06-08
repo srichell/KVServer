@@ -7,6 +7,11 @@ public class LRUEntry extends AbstractKeyValueEntry<String, String> {
     private String key;
     private String value;
 
+    public LRUEntry(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
     @Override
     public String getKey() {
         return this.key;
