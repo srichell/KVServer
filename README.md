@@ -45,3 +45,30 @@ SUCCESS PUT (JAPAN, TOKYO)
 
 EOR
 EOC ------------> Sentinel
+
+
+This server uses an LRU to evict the oldest used entries. When you put in a 
+bunc of entries, the lease used entry is evicted. When a GET is done on 
+an evicted entry, an error i returned.
+
+netcat localhost 7000                                                                  PUT USA WASHINGTON_DC
+SUCCESS PUT (USA, WASHINGTON_DC)
+
+EOR
+PUT ENGLAND LONDON
+SUCCESS PUT (ENGLAND, LONDON)
+
+EOR
+GET USA
+SUCCESS GET (USA) = WASHINGTON_DC
+
+EOR
+PUT INDIA NEW_DELHI
+SUCCESS PUT (INDIA, NEW_DELHI)
+
+EOR
+GET USA
+FAILED. Key (USA) not found
+
+EOR
+
