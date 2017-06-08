@@ -14,10 +14,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class LRU <T extends AbstractKeyValueEntry<K,V>, K,V > {
     private final CopyOnWriteArrayList<T> lruEntries; // for eviction
     private final ConcurrentHashMap<K,V> hashMap; // for lookups
-    private final int maxEntries; // for lookups
+    private final long maxEntries; // for lookups
 
 
-    public LRU(int maxEntries) {
+    public LRU(long maxEntries) {
         this.maxEntries = maxEntries;
         this.lruEntries = new CopyOnWriteArrayList<T>();
         this.hashMap = new ConcurrentHashMap<K, V>();
@@ -31,7 +31,7 @@ public class LRU <T extends AbstractKeyValueEntry<K,V>, K,V > {
         return hashMap;
     }
 
-    public int getMaxEntries() {
+    public long getMaxEntries() {
         return maxEntries;
     }
 
