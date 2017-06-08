@@ -1,5 +1,8 @@
 package com.srichell.tsc.main;
 
+import com.srichell.tsc.commands.Command;
+import com.srichell.tsc.commands.GetCommand;
+import com.srichell.tsc.commands.PutCommand;
 import com.srichell.tsc.lru.LRU;
 import com.srichell.tsc.lru.LRUEntry;
 
@@ -102,18 +105,8 @@ public class KVServer {
                 String commandLine = null;
                 // One Line, one command
                 while ((commandLine = reader.readLine()) != null) {
-
-                    String[] commandSegments = commandLine.split(" ");
-                    if(commandSegments[0].equalsIgnoreCase("GET")) {
-
-                    }
-                    if(commandSegments[0].equalsIgnoreCase("PUT")) {
-
-                    }
-                    System.out.println("Unknown Command. Ignoring");
+                    Commands.getByType(Command.getCommandType(commandLine)).handle(commandLine, clientSocket, getLru());
                 }
-                is.close();
-                reader.close();
                 clientSocket.close();
             } catch (IOException e) {
                 System.out.println("Exception occurred while handling request from client " + e);
@@ -126,4 +119,41 @@ public class KVServer {
         lru = new LRU<LRUEntry, String, String>(maxEntries);
         return this;
     }
+
+    private enum Commands {
+        GET("GET") {
+            @Override
+            public void handle(String commandLine, Socket clientSocket, LRU lru) throws IOException {
+                Command getCommand = new GetCommand(commandLine,  clientSocket,  lru);
+                getCommand.handle();
+            }
+        },
+        PUT("PUT") {
+            @Override
+            public void handle(String commandLine, Socket clientSocket, LRU lru) throws IOException {
+                Command putCommand = new PutCommand(commandLine,  clientSocket,  lru);
+                putCommand.handle();
+            }
+        };
+
+        private String commandType;
+
+        Commands(String type) {
+            this.commandType = type;
+        }
+
+        public String getCommandType() {
+            return commandType;
+        }
+
+        public static Commands getByType(String type) {
+            for (Commands command : Commands.values() ) {
+                if(command.getCommandType().equalsIgnoreCase(type)) {return command;}
+            }
+            return null;
+        }
+
+        public abstract void handle(String commandLine, Socket clientSocket, LRU lru) throws IOException;
+    }
+
 }
